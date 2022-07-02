@@ -29,12 +29,16 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 usePassport(app);
+app.use((req, res, next) => {
+	res.locals.isAuthenticated = req.isAuthenticated();
+	res.locals.user = req.user;
+	next();
+});
 
 // routes
 app.get('/', (req, res) => {
 	return Todo.findAll({ raw: raw, nest: true })
 		.then(todos => {
-			console.log(todos);
 			res.render('index', { todos });
 		})
 		.catch(err => res.status(422).json(err));
@@ -84,7 +88,8 @@ app.post('/users/register', async (req, res) => {
 });
 
 app.get('/users/logout', (req, res) => {
-	res.send('logout');
+	req.logout();
+	res.redirect('/users/login');
 });
 
 app.get('/todos/:id', (req, res) => {
