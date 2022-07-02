@@ -5,6 +5,11 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 3000;
 
+// database setup
+const db = require('./models');
+const Todo = db.Todo;
+const User = db.User;
+
 // view engine
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
 app.set('view engine', 'hbs');
@@ -30,8 +35,10 @@ app.get('/users/register', (req, res) => {
 	res.render('register');
 });
 
-app.post('/users/register', (req, res) => {
-	res.send('register');
+app.post('/users/register', async (req, res) => {
+	const { name, email, password, confirmPassword } = req.body;
+	const user = await User.create({ name, email, password });
+	return res.redirect('/');
 });
 
 app.get('/users/logout', (req, res) => {
