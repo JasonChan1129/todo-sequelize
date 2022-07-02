@@ -7,6 +7,7 @@ const PORT = 3000;
 
 // database setup
 const db = require('./models');
+const { raw } = require('mysql2');
 const Todo = db.Todo;
 const User = db.User;
 
@@ -20,7 +21,12 @@ app.use(methodOverride('_method'));
 
 // routes
 app.get('/', (req, res) => {
-	res.send('hello world');
+	return Todo.findAll({ raw: raw, nest: true })
+		.then(todos => {
+			console.log(todos);
+			res.render('index', { todos });
+		})
+		.catch(err => res.status(422).json(err));
 });
 
 app.get('/users/login', (req, res) => {
@@ -43,6 +49,15 @@ app.post('/users/register', async (req, res) => {
 
 app.get('/users/logout', (req, res) => {
 	res.send('logout');
+});
+
+app.get('/todos/:id', (req, res) => {
+	const id = req.params.id;
+	return Todo.findByPk(id, { raw: true })
+		.then(todo => {
+			res.render('detail', { todo });
+		})
+		.catch(error => console.log(error));
 });
 
 app.listen(PORT, () => {
