@@ -48,10 +48,10 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-	const _id = req.params.id;
-	const userId = req.user._id;
-	return Todo.findOne({ _id, userId })
-		.then(todo => todo.remove())
+	const id = req.params.id;
+	const UserId = req.user.id;
+	return Todo.findOne({ where: { id, UserId } })
+		.then(todo => todo.destroy())
 		.then(() => res.redirect('/'))
 		.catch(error => console.log(error));
 });

@@ -4,10 +4,8 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const routes = require('./routes/index');
 const usePassport = require('./config/passport');
-const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 3000;
-const passport = require('passport');
 
 // view engine
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
