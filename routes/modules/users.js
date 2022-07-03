@@ -13,7 +13,7 @@ router.post(
 	'/login',
 	passport.authenticate('local', {
 		successRedirect: '/',
-		failureRedirect: '/login',
+		failureRedirect: '/users/login',
 	})
 );
 
@@ -50,7 +50,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/logout', (req, res) => {
 	req.logout();
-	res.redirect('/login');
+	res.redirect('/users/login');
 });
 
 module.exports = router;

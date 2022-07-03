@@ -5,7 +5,8 @@ const db = require('../../models');
 const Todo = db.Todo;
 
 router.get('/', (req, res) => {
-	return Todo.findAll({ raw: true, nest: true })
+	const UserId = req.user.id;
+	return Todo.findAll({ where: { UserId }, raw: true, nest: true })
 		.then(todos => {
 			res.render('index', { todos });
 		})
