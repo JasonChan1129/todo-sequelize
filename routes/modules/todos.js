@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
 		.catch(error => console.log(error));
 });
 
-router.get('/todos/:id', (req, res) => {
+router.get('/:id', (req, res) => {
 	const id = req.params.id;
 	return Todo.findByPk(id, { raw: true })
 		.then(todo => {
@@ -26,25 +26,24 @@ router.get('/todos/:id', (req, res) => {
 });
 
 router.get('/:id/edit', (req, res) => {
-	const userId = req.user._id;
-	const _id = req.params.id;
-	return Todo.findOne({ _id, userId })
-		.lean()
+	const UserId = req.user.id;
+	const id = req.params.id;
+	return Todo.findOne({ where: { id, UserId }, raw: true })
 		.then(todo => res.render('edit', { todo }))
 		.catch(error => console.log(error));
 });
 
 router.put('/:id', (req, res) => {
-	const userId = req.user._id;
-	const _id = req.params.id;
+	const UserId = req.user.id;
+	const id = req.params.id;
 	const { name, isDone } = req.body;
-	return Todo.findOne({ _id, userId })
+	return Todo.findOne({ where: { id, UserId } })
 		.then(todo => {
 			todo.name = name;
 			todo.isDone = isDone === 'on';
 			return todo.save();
 		})
-		.then(() => res.redirect(`/todos/${_id}`))
+		.then(() => res.redirect(`/todos/${id}`))
 		.catch(error => console.log(error));
 });
 
