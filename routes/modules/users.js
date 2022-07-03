@@ -23,14 +23,25 @@ router.get('/register', (req, res) => {
 
 router.post('/register', async (req, res) => {
 	const { name, email, password, confirmPassword } = req.body;
+	const errors = [];
+	if (!name || !email || !password || !confirmPassword) {
+		errors.push({ message: 'All fields are required' });
+	}
+	if (password !== confirmPassword) {
+		errors.push({ message: 'Password not match!' });
+	}
+	if (errors.length) {
+		return res.render('register', { name, email, password, confirmPassword, errors });
+	}
 	User.findOne({ where: { email } }).then(user => {
 		if (user) {
-			console.log('User already exists');
+			errors.push({ message: 'That email has been registered!' });
 			return res.render('register', {
 				name,
 				email,
 				password,
 				confirmPassword,
+				errors,
 			});
 		}
 		return bcrypt
@@ -50,6 +61,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/logout', (req, res) => {
 	req.logout();
+	req.flash('success_msg', 'Logged out successfully!');
 	res.redirect('/users/login');
 });
 
